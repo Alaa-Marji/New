@@ -1,0 +1,10 @@
+.err {
+  background-color: #f8d7da;
+  color: #842029;
+  text-align: center;
+  padding: 15px 20px;
+  margin-top: 10px;
+  border-radius: 12px;
+  width: 50%;
+  display: block;
+}

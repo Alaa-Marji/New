@@ -1,0 +1,160 @@
+.error-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+#error-box {
+  position: relative;
+  width: 300px;
+  background: linear-gradient(to bottom left, #ef8d9c 40%, #ffc39e 100%);
+  border-radius: 20px;
+  box-shadow: 5px 5px 20px rgba(203, 205, 211, 0.1);
+  padding: 20px;
+  text-align: center;
+  animation: move 3s ease-in-out infinite;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  background: #fcfcfc;
+  border-radius: 50%;
+  position: absolute;
+  top: 4%;
+  right: 6%;
+  cursor: pointer;
+}
+
+.dot.two {
+  right: 12%;
+  opacity: 0.5;
+}
+
+.face2 {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  background: #fcfcfc;
+  border-radius: 50%;
+  border: 1px solid #777777;
+  margin: 20px auto;
+  animation: roll 3s ease-in-out infinite;
+}
+
+@keyframes roll {
+  0% {
+    transform: rotate(0deg);
+    left: -20%;
+  }
+  50% {
+    left: 50%;
+    transform: rotate(168deg);
+  }
+  100% {
+    transform: rotate(0deg);
+    left: -20%;
+  }
+}
+
+.shadow {
+  margin-top: 5px;
+  position: absolute;
+  width: 21%;
+  height: 3%;
+  opacity: 0.5;
+  background: #6e6c6c;
+  left: 40%;
+  top: 43%;
+  border-radius: 50%;
+  z-index: 1;
+  animation: scale 1s ease-in infinite;
+}
+
+@keyframes scale {
+  50% {
+    transform: scale(0.9);
+  }
+}
+
+.eye {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  background: #777777;
+  border-radius: 50%;
+  top: 40%;
+  left: 20%;
+}
+
+.eye.right {
+  left: 68%;
+}
+
+.mouth.sad {
+  position: absolute;
+  top: 49%;
+  left: 41%;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: 2px solid;
+  border-color: #777777 transparent transparent #777777;
+  transform: rotate(45deg);
+}
+
+.message {
+  position: relative;
+  width: 100%;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.alert {
+  font-weight: 700;
+  letter-spacing: 5px;
+  text-align: center;
+  font-size: 24px;
+  margin-top: 10px;
+}
+p {
+  color: #333;
+  font-size: 10px;
+}
+
+.error-text {
+  font-size: 18px;
+  color: #000000;
+  margin-top: 10px;
+}
+
+@keyframes move {
+  0% {
+    transform: translateY(0%);
+  }
+  50% {
+    transform: translateY(10%);
+  }
+  100% {
+    transform: translateY(0%);
+  }
+}
+
+@keyframes mov {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(90%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
