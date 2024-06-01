@@ -121,7 +121,7 @@ export default function Sidebar() {
         <button
           onClick={() => {
             setCurrentActive("Line");
-            navigate("");
+            navigate("LineChart");
           }}
           className={currentActive === "Line" ? "active" : ""}
         >
@@ -131,7 +131,7 @@ export default function Sidebar() {
         <button
           onClick={() => {
             setCurrentActive("pie");
-            navigate("");
+            navigate("PieChart");
           }}
           className={currentActive === "pie" ? "active" : ""}
         >
@@ -141,7 +141,7 @@ export default function Sidebar() {
         <button
           onClick={() => {
             setCurrentActive("bar");
-            navigate("");
+            navigate("BarChart");
           }}
           className={currentActive === "bar" ? "active" : ""}
         >

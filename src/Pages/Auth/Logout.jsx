@@ -12,7 +12,7 @@ export default function Logout({ handleLogout }) {
     try {
       const res = await axios.get(`${baseURL}/${LOGOUT}`, {
         headers: {
-          Authorization: "Bearer" + cookie.get("e-commerce"),
+          Authorization: "Bearer" + cookie.get("token"),
         },
       });
 

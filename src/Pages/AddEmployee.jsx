@@ -32,7 +32,7 @@ const AddEmployee = () => {
   const [employees, setEmployees] = useState([]);
   const [showDialog, setShowDialog] = useState(false);
   const [firstName, setFirstName] = useState("");
-  const [name, setName] = useState("");
+  // const [name, setName] = useState("");
   const [lastName, setLastName] = useState("");
   const [middleName, setMiddleName] = useState("");
   const [email, setEmail] = useState("");
@@ -40,7 +40,6 @@ const AddEmployee = () => {
   const [role, setRole] = useState([]);
   const [roleOptions, setRoleOptions] = useState([]);
   const [selectedRoles, setSelectedRoles] = useState([]);
-
   const [editingEmployeeId, setEditingEmployeeId] = useState(null);
   const cookie = Cookie();
 
@@ -72,12 +71,15 @@ const AddEmployee = () => {
   useEffect(() => {
     const fetchRoles = async () => {
       try {
-        const token = cookie.get("Bearer");
-        const rolesResponse = await axios.get(`${baseURL}/role/allRoles`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const token = cookie.get("token");
+        const rolesResponse = await axios.get(
+          `${baseURL}/admin/role/allRoles`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         const rolesData = rolesResponse.data.data;
         // if (rolesData && typeof rolesData === "object") {
@@ -97,6 +99,21 @@ const AddEmployee = () => {
     fetchRoles();
   }, []);
 
+  const getRandomLightColor = () => {
+    const lightColors = [
+      "#F0F8FF",
+      "#F0FFFF",
+      "#F5F5DC",
+      "#FAFAD2",
+      "#FFF5EE",
+      "#FFE4E1",
+      "#F0FFF0",
+      "#FFFFF0",
+    ];
+
+    const randomIndex = Math.floor(Math.random() * lightColors.length);
+    return lightColors[randomIndex];
+  };
   const handleAddEmployee = () => {
     setShowDialog(true);
     setEditingEmployeeId(null);
@@ -125,7 +142,7 @@ const AddEmployee = () => {
         employeeData,
         {
           headers: {
-            Authorization: `Bearer ${cookie.get("Bearer")}`,
+            Authorization: `Bearer ${cookie.get("token")}`,
           },
         }
       );
@@ -160,7 +177,7 @@ const AddEmployee = () => {
 
   const handleDeleteEmployee = async (id) => {
     try {
-      const token = cookie.get("Bearer");
+      const token = cookie.get("token");
       await axios.delete(`${baseURL}/employee/deleteEmployee/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -174,12 +191,19 @@ const AddEmployee = () => {
   };
 
   return (
-    <Box sx={{ height: "100vh", overflowY: "auto", padding: 2 }}>
+    <Box
+      sx={{
+        height: "100vh",
+        overflowY: "auto",
+        padding: 2,
+        marginBottom: "10px",
+      }}
+    >
       <Button
         variant="contained"
         color="primary"
         onClick={handleAddEmployee}
-        style={{ marginLeft: 8 }}
+        style={{ marginLeft: 8, marginBottom: "20px" }}
       >
         Add Employee
       </Button>
@@ -321,6 +345,7 @@ const AddEmployee = () => {
                 <TableCell>ID</TableCell>
                 <TableCell>User Name</TableCell>
                 <TableCell>Email</TableCell>
+                <TableCell>Roles</TableCell>
                 <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
@@ -330,6 +355,27 @@ const AddEmployee = () => {
                   <TableCell>{employee.id}</TableCell>
                   <TableCell>{employee.user_name}</TableCell>
                   <TableCell>{employee.email}</TableCell>
+                  <TableCell>
+                    {Array.isArray(employee.role) &&
+                      employee.role.map((item) => (
+                        <Button
+                          key={item}
+                          variant="contained"
+                          style={{
+                            backgroundColor: getRandomLightColor(),
+                            color: "var( --title)",
+                            margin: 2,
+                            width: "auto",
+                            height: "auto",
+                            cursor: "not-allowed",
+                            pointerEvents: "none",
+                          }}
+                        >
+                          {item}
+                        </Button>
+                      ))}
+                  </TableCell>
+
                   <TableCell style={{ display: "flex", gap: "2px" }}>
                     <IconButton
                       aria-label="edit"

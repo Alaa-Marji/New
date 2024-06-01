@@ -28,28 +28,44 @@ import Cookie from "cookie-universal";
 
 const predefinedPermissions = [
   "role control",
+  "admin report create",
+  "admin report view",
+  "admin report edit",
+  "admin report delete",
+
+  "logs view",
   "employee control",
-  "delete user",
-  "report user",
-  "view news",
-  "view employees",
-  "view opportunities",
-  "view users",
-  "view posts",
-  "delete opportunity",
+  "employee view",
+
   "block user",
-  "delete post",
-  "view requests",
-  "delete request",
-  "news control",
-  "view reports user",
-  "delete report user",
-  "admin report",
-  "view admin reports",
-  "opportunity control",
-  "edit request",
-  "post control",
-  "request control",
+
+  "news create",
+  "news view",
+  "news delete",
+
+  "user view",
+  "user edit",
+  "user delete",
+
+  "seeker create",
+  "company create",
+  "user report create",
+  "user report view",
+  "user report delete",
+
+  "opportunity create",
+  "opportunities view",
+  "opportunity delete",
+
+  "post create",
+  "posts view",
+  "post delete",
+
+  "request create",
+  "request view",
+  "request edit",
+  "status edit",
+  "request delete",
 ];
 
 const Transition = forwardRef(function Transition(props, ref) {
@@ -67,12 +83,16 @@ const RolesTable = () => {
   useEffect(() => {
     const fetchRoles = async () => {
       try {
-        const token = cookie.get("Bearer");
-        const rolesResponse = await axios.get(`${baseURL}/role/allRoles`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const token = cookie.get("token");
+        console.log(token);
+        const rolesResponse = await axios.get(
+          `http://127.0.0.1:8000/api/admin/role/allRoles`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         const rolesData = rolesResponse.data.data;
         if (rolesData && typeof rolesData === "object") {
@@ -128,15 +148,14 @@ const RolesTable = () => {
     const permissionsArray = Object.keys(selectedPermissions).filter(
       (permission) => selectedPermissions[permission]
     );
-
     const roleData = {
       title: roleName,
       permissions: permissionsArray,
     };
 
     const url = editingRoleId
-      ? `${baseURL}/role/editRole`
-      : `${baseURL}/role/addRole`;
+      ? `${baseURL}/admin/role/editRole`
+      : `${baseURL}/admin/role/addRole`;
 
     const data = editingRoleId
       ? {
@@ -149,7 +168,7 @@ const RolesTable = () => {
     try {
       const response = await axios.post(url, data, {
         headers: {
-          Authorization: `Bearer ${cookie.get("Bearer ")}`,
+          Authorization: `Bearer ${cookie.get("token")}`,
         },
       });
 
@@ -183,11 +202,11 @@ const RolesTable = () => {
 
   const handleDeleteRole = async (id) => {
     try {
-      const token = cookie.get("Bearer");
+      const token = cookie.get("token");
       const formData = new FormData();
       formData.append("role", id);
 
-      await axios.post(`${baseURL}/role/deleteRole`, formData, {
+      await axios.post(`${baseURL}/admin/role/deleteRole`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
@@ -373,7 +392,7 @@ const RolesTable = () => {
             style={{ width: "300px", height: "300px" }}
           />
           <h3 style={{ color: "var(--title)" }}>
-            There Are No Users To display, Let's Add Someone To Our Team
+            There Are No Users To display, Let us Add Someone To Our Team
           </h3>
         </Box>
       )}

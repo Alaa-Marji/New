@@ -47,8 +47,7 @@ export default function Login() {
     try {
       const response = await axios.post(`${baseURL}/${LOG}`, form);
       const token = response.data.data.token;
-      console.log(token);
-      cookie.set("Bearer", token);
+      cookie.set("token", token);
       let roles = response.data.data.user.roles_name;
       roles = Object.entries(roles);
       let permissions = [];

@@ -9,11 +9,11 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import Dashboard from "./Pages/Dashboard";
-// import BarChart from "./Pages/BarChart";
+import BarChar from "./Pages/BarChart";
 import Block from "./Pages/Block";
 // import ContractRequests from "./Pages/ContractRequests";
-// import LineChart from "./Pages/LineChart";
-// import PieChart from "./Pages/PieChart";
+import LineChar from "./Pages/LineChart";
+import PieChar from "./Pages/PieChart";
 import Posts from "./Pages/Posts";
 import Reports from "./Pages/Reports";
 import Users from "./Pages/Users";
@@ -28,10 +28,12 @@ const router = createBrowserRouter(
         <Route index element={<Dashboard />} />
         <Route path="/Roles" element={<Roles />} />
         <Route path="/Employee" element={<AddEmployee />} />
-        {/* <Route path="/BarChart" element={<BarChart />} /> */}
+        <Route path="/BarChart" element={<BarChar />} />
+        <Route path="/LineChart" element={<LineChar />} />
+        <Route path="/PieChart" element={<PieChar />} />
+
         <Route path="/Block" element={<Block />} />
         {/* <Route path="/CompaniesRegistration" element={<ContractRequests />} />
-        <Route path="/LineChart" element={<LineChart />} />
         <Route path="/PieChart" element={<PieChart />} /> */}
         <Route path="/Posts" element={<Posts />} />
         <Route path="/Reports" element={<Reports />} />
