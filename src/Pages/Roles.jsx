@@ -21,8 +21,15 @@ import {
   DialogContent,
   DialogTitle,
   Slide,
+  Chip,
 } from "@mui/material";
-import { Edit, Delete } from "@mui/icons-material";
+import {
+  Edit,
+  Delete,
+  ManageAccounts,
+  ManageAccountsOutlined,
+  AdminPanelSettings,
+} from "@mui/icons-material";
 import { baseURL } from "../Api/Api";
 import Cookie from "cookie-universal";
 
@@ -56,6 +63,22 @@ const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
+const getRandomLightColor = () => {
+  const darkColors = [
+    "#A057C2",
+    "#A0CFCF",
+    "#A05C75",
+    "#A0C077",
+    "#A0B5BD",
+    "#A08BA1",
+    "#A0A7A7",
+    "#A0A9A7",
+  ];
+
+  const randomIndex = Math.floor(Math.random() * darkColors.length);
+  return darkColors[randomIndex];
+};
+
 const RolesTable = () => {
   const [roles, setRoles] = useState([]);
   const [open, setOpen] = useState(false);
@@ -64,49 +87,29 @@ const RolesTable = () => {
   const [editingRoleId, setEditingRoleId] = useState(null);
   const cookie = Cookie();
 
+  const fetchRoles = async () => {
+    try {
+      const token = cookie.get("Bearer");
+      const rolesResponse = await axios.get(`${baseURL}/role/allRoles`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const rolesData = rolesResponse.data.data;
+      setRoles(rolesData);
+    } catch (error) {
+      console.error("Error fetching employees:", error);
+    }
+  };
   useEffect(() => {
-    const fetchRoles = async () => {
-      try {
-        const token = cookie.get("Bearer");
-        const rolesResponse = await axios.get(`${baseURL}/role/allRoles`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const rolesData = rolesResponse.data.data;
-        if (rolesData && typeof rolesData === "object") {
-          const rolesArray = Object.entries(rolesData).map(
-            ([role, permissions]) => ({
-              id: role,
-              role: role,
-              permissions: permissions,
-            })
-          );
-          setRoles(rolesArray);
-        } else {
-          console.error("Invalid roles data format:", rolesData);
-        }
-
-        const initialPermissionsState = predefinedPermissions.reduce(
-          (acc, permission) => {
-            acc[permission] = false;
-            return acc;
-          },
-          {}
-        );
-
-        setSelectedPermissions(initialPermissionsState);
-      } catch (error) {
-        console.error("Error fetching roles:", error);
-      }
-    };
-
     fetchRoles();
   }, []);
 
   const handleOpen = () => {
     setOpen(true);
+    setRoleName("");
+    setSelectedPermissions([]);
   };
 
   const handleClose = () => {
@@ -123,47 +126,35 @@ const RolesTable = () => {
     setSelectedPermissions(initialPermissionsState);
   };
 
+  const permissionsArray = Object.keys(selectedPermissions).filter(
+    (permission) => selectedPermissions[permission]
+  );
+
+  const handleAddRole = () => {
+    setOpen(true);
+    setRoleName("");
+    setSelectedPermissions([]);
+  };
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    const permissionsArray = Object.keys(selectedPermissions).filter(
-      (permission) => selectedPermissions[permission]
-    );
 
     const roleData = {
       title: roleName,
       permissions: permissionsArray,
     };
 
-    const url = editingRoleId
-      ? `${baseURL}/role/editRole`
-      : `${baseURL}/role/addRole`;
-
-    const data = editingRoleId
-      ? {
-          role: editingRoleId,
-          new_name: roleName,
-          permissions: permissionsArray,
-        }
-      : roleData;
-
     try {
-      const response = await axios.post(url, data, {
+      const response = await axios.post(`${baseURL}/role/addRole`, roleData, {
         headers: {
-          Authorization: `Bearer ${cookie.get("Bearer ")}`,
+          Authorization: `Bearer ${cookie.get("Bearer")}`,
         },
       });
 
-      if (editingRoleId) {
-        setRoles(
-          roles.map((role) =>
-            role.id === editingRoleId ? response.data : role
-          )
-        );
-      } else {
-        setRoles([...roles, response.data]);
-      }
-
-      handleClose();
+      setRoles([...roles, response.data.data]);
+      setOpen(false);
+      setRoleName("");
+      setSelectedPermissions([]);
+      fetchRoles();
     } catch (error) {
       console.error("There was an error submitting the form!", error);
     }
@@ -184,13 +175,16 @@ const RolesTable = () => {
   const handleDeleteRole = async (id) => {
     try {
       const token = cookie.get("Bearer");
-      const formData = new FormData();
-      formData.append("role", id);
 
-      await axios.post(`${baseURL}/role/deleteRole`, formData, {
+      const confirmed = window.confirm("Are You Sure?");
+
+      if (!confirmed) {
+        return;
+      }
+
+      await axios.delete(`http://127.0.0.1:8000/api/role/deleteRole/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
         },
       });
 
@@ -208,12 +202,19 @@ const RolesTable = () => {
   };
 
   return (
-    <Box sx={{ height: "100vh", overflowY: "auto", padding: 2 }}>
+    <Box
+      sx={{
+        height: "100vh",
+        overflowY: "auto",
+        padding: 2,
+        bgcolor: "var(--secondary)",
+      }}
+    >
       <Button
         variant="contained"
         color="primary"
-        onClick={handleOpen}
-        style={{ marginBottom: 16, marginLeft: 8 }}
+        onClick={handleAddRole}
+        style={{ marginBottom: 16, marginLeft: 8, bgcolor: "var(--secondary)" }}
       >
         Add Role
       </Button>
@@ -223,26 +224,53 @@ const RolesTable = () => {
         keepMounted
         onClose={handleClose}
         aria-describedby="alert-dialog-slide-description"
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+        }}
       >
-        <DialogTitle
+        <Button
+          onClick={handleClose}
+          color="primary"
           sx={{
-            paddingBottom: 0,
-            color: "var(--title)",
-            backgroundColor: "var(--secondary)",
+            padding: "10px",
+
+            textAlign: "end",
           }}
         >
-          {editingRoleId ? "Edit Role" : "Add Role"}
-        </DialogTitle>
+          Cancel
+        </Button>
+
         <Box
           component="form"
           onSubmit={handleFormSubmit}
           sx={{
-            marginBottom: 2,
-            padding: 2,
             paddingTop: 0,
             backgroundColor: "var(--secondary)",
+            display: "flex",
+            flexDirection: "column",
+            bgcolor: " var(--secondary)",
+
+            color: "var(--title)",
           }}
         >
+          <img
+            src="../../public/aeb135578200d078b6076b9cc3d1445f.gif"
+            alt="Loading"
+            className="loading-image"
+            style={{ alignSelf: "center" }}
+          />
+          <DialogTitle
+            sx={{
+              paddingBottom: 0,
+              color: "var(--title)",
+              backgroundColor: "var(--secondary)",
+              alignSelf: "center",
+            }}
+          >
+            Do You Need To Add New Role?
+          </DialogTitle>
           <DialogContent>
             <TextField
               label="Role Name"
@@ -252,35 +280,42 @@ const RolesTable = () => {
               required
               margin="normal"
               sx={{ color: "var(--title)" }}
+              InputProps={{
+                style: {
+                  color: "var(--title)",
+                },
+              }}
+              InputLabelProps={{
+                style: {
+                  color: "var(--title)",
+                },
+              }}
             />
-            <FormGroup>
-              <Grid container spacing={2}>
-                {predefinedPermissions.map((permission) => (
-                  <Grid
-                    item
-                    xs={12}
-                    sm={6}
-                    md={4}
-                    lg={3}
-                    xl={2}
-                    key={permission}
-                  >
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={selectedPermissions[permission]}
-                          onChange={handleCheckboxChange}
-                          name={permission}
-                          sx={{ color: "var(--title)" }}
-                        />
-                      }
-                      label={permission}
-                      sx={{ color: "var(--title)" }}
-                    />
-                  </Grid>
-                ))}
-              </Grid>
-            </FormGroup>
+            <Grid container spacing={0} sx={{ bgcolor: "var(--secondary)" }}>
+              {predefinedPermissions.map((permission) => (
+                <Grid item key={permission}>
+                  <Chip
+                    label={permission}
+                    onClick={() =>
+                      handleCheckboxChange({
+                        target: {
+                          name: permission,
+                          checked: !selectedPermissions[permission],
+                        },
+                      })
+                    }
+                    style={{
+                      margin: 2,
+                      borderRadius: "20px",
+                      backgroundColor: selectedPermissions[permission]
+                        ? getRandomLightColor()
+                        : "var( --border)",
+                      color: "var(--title)",
+                    }}
+                  />
+                </Grid>
+              ))}
+            </Grid>
           </DialogContent>
           <DialogActions
             sx={{
@@ -289,10 +324,12 @@ const RolesTable = () => {
               backgroundColor: "var(--secondary)",
             }}
           >
-            <Button onClick={handleClose} color="primary">
-              Cancel
-            </Button>
-            <Button type="submit" variant="contained" color="primary">
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              style={{ alignSelf: "center" }}
+            >
               Submit
             </Button>
           </DialogActions>
@@ -300,63 +337,100 @@ const RolesTable = () => {
       </Dialog>
 
       {roles.length > 0 ? (
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>ID</TableCell>
-                <TableCell>Role</TableCell>
-                <TableCell>Permissions</TableCell>
-                <TableCell>Action</TableCell>
+        <TableContainer
+          component={Paper}
+          sx={{ bgcolor: "var(--secondary) ", color: "var(--title)" }}
+        >
+          <Table sx={{ bgcolor: "var(--secondary) ", color: "var(--title)" }}>
+            <TableHead
+              sx={{ bgcolor: "var(--secondary) ", color: "var(--title)" }}
+            >
+              <TableRow
+                sx={{ bgcolor: "var(--secondary) ", color: "var(--title)" }}
+              >
+                <TableCell
+                  sx={{ bgcolor: "var(--secondary) ", color: "var(--title)" }}
+                >
+                  ID
+                </TableCell>
+                <TableCell
+                  sx={{ bgcolor: "var(--secondary) ", color: "var(--title)" }}
+                >
+                  Role
+                </TableCell>
+                <TableCell
+                  sx={{ bgcolor: "var(--secondary) ", color: "var(--title)" }}
+                >
+                  Permissions
+                </TableCell>
+                <TableCell
+                  sx={{ bgcolor: "var(--secondary) ", color: "var(--title)" }}
+                >
+                  Action
+                </TableCell>
               </TableRow>
             </TableHead>
-            <TableBody>
-              {Array.isArray(roles) && roles.length > 0 ? (
-                roles.map((role) => (
-                  <TableRow key={role.id}>
-                    <TableCell>{role.id}</TableCell>
-                    <TableCell>{role.role}</TableCell>
-                    <TableCell>
-                      {Array.isArray(role.permissions) &&
-                        role.permissions.map((permission) => (
-                          <Button
-                            key={permission}
-                            variant="contained"
-                            color="primary"
-                            style={{ margin: 2 }}
-                          >
-                            {permission}
-                          </Button>
-                        ))}
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        display: "flex",
-                        gap: "2px",
-                      }}
+            <TableBody
+              sx={{ bgcolor: "var(--secondary) ", color: "var(--title)" }}
+            >
+              {roles?.map((role) => (
+                <TableRow key={role?.id}>
+                  <TableCell
+                    sx={{ alignSelf: "center", color: "var(--title) " }}
+                  >
+                    {role?.id}
+                  </TableCell>
+                  <TableCell
+                    sx={{ alignSelf: "center", color: "var(--title)" }}
+                  >
+                    {role?.name}
+                  </TableCell>
+                  <TableCell
+                    sx={{ alignSelf: "center", color: "var(--title) " }}
+                  >
+                    {Array.isArray(role.permissions) &&
+                      role?.permissions?.map((permission) => (
+                        <Button
+                          key={permission}
+                          variant="contained"
+                          style={{
+                            margin: 2,
+                            fontSize: "smaller",
+                            cursor: "not-allowed",
+                            pointerEvents: "none",
+                            borderRadius: "20px",
+                          }}
+                        >
+                          <AdminPanelSettings />
+                          {permission.name}
+                        </Button>
+                      ))}
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      display: "flex",
+                      gap: "2px",
+                      color: "var(--title) ",
+                    }}
+                  >
+                    <IconButton
+                      aria-label="edit"
+                      onClick={() => handleEditRole(role.id)}
+                      sx={{ color: "var(--title)" }}
                     >
-                      <IconButton
-                        aria-label="edit"
-                        onClick={() => handleEditRole(role.id)}
-                      >
-                        <Edit />
-                      </IconButton>
-                      <IconButton
-                        aria-label="delete"
-                        onClick={() => handleDeleteRole(role.id)}
-                      >
-                        <Delete />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={4} align="center">
-                    No roles available
+                      <Edit />
+                    </IconButton>
+
+                    <IconButton
+                      aria-label="delete"
+                      onClick={() => handleDeleteRole(role.id)}
+                      sx={{ color: "var(--title)" }}
+                    >
+                      <Delete />
+                    </IconButton>
                   </TableCell>
                 </TableRow>
-              )}
+              ))}
             </TableBody>
           </Table>
         </TableContainer>

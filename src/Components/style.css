@@ -132,14 +132,15 @@ button span {
 .submenu-container button {
   width: 100%;
 }
-.icon-close {
-  font-size: 1.5rem;
-  color: var(--subtitle);
+.iconclose {
+  font-size: 1.2rem;
+
   transition: 0.3s;
 }
 
-.icon-close:hover {
-  font-size: 1.7rem;
+.iconclose:hover {
+  margin-right: 10px;
+  font-size: 1.4rem;
   color: crimson;
   rotate: 180deg;
 }

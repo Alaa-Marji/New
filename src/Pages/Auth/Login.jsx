@@ -2,17 +2,21 @@ import axios from "axios";
 import { useState } from "react";
 import { LOG, baseURL } from "../../Api/Api";
 import Loading from "../Loading/loading";
+import "../Loading.css";
 import ErrorMessage from "../errorBox";
 import "./css/components/Auth.css";
 import "./css/components/alert.css";
 import "./css/components/button.css";
 import "./css/components/form.css";
-import "../Loading.css";
 import { Box, Button, Modal, Fade } from "@mui/material";
 import PasswordResetComponent from "../Auth/ForgetPassword/Forget";
 import Cookie from "cookie-universal";
+import { useNavigate } from "react-router-dom";
+import { Close } from "@mui/icons-material";
 
 export default function Login() {
+  const navigate = useNavigate();
+
   // States
   const [form, setForm] = useState({
     login: "",
@@ -60,6 +64,7 @@ export default function Login() {
       setLoading(false);
 
       // Replace true delete path and show last path
+      navigate("/");
     } catch (err) {
       setLoading(false);
       if (err.response === 401) {
@@ -132,7 +137,8 @@ export default function Login() {
       >
         <Fade in={open}>
           <Box className="modal-box modal-animation">
-            <Button onClick={handleClose}>Cancel</Button>
+            <Close className="iconclose" onClick={handleClose} />
+
             <PasswordResetComponent />
           </Box>
         </Fade>

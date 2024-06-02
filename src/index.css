@@ -27,6 +27,10 @@ body,
   box-shadow: 0 0 10px rgba(121, 164, 184, 0.822) inset;
 }
 
+css-1t1j96h-MuiPaper-root-MuiDialog-paper {
+  background-color: red;
+}
+
 /* Add these styles in your CSS file, for example, in components/Auth.css */
 
 .modal-animation {
@@ -84,6 +88,11 @@ body,
   opacity: 0;
   animation: waveAnimation 1s ease reverse forwards;
 }
+
+.css-1t1j96h-MuiPaper-root-MuiDialog-paper {
+  background-color: var(--secondary);
+}
+
 @media (max-width: 1000px) {
   .container {
     width: 100%;
