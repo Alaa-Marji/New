@@ -46,7 +46,7 @@ const AddEmployee = () => {
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const token = cookie.get("Bearer");
+        const token = cookie.get("token");
         const employeesResponse = await axios.get(
           `http://127.0.0.1:8000/api/admin/employee/employees`,
           {
@@ -86,7 +86,7 @@ const AddEmployee = () => {
         const rolesArray = rolesData?.map((item) => item?.name);
 
         setRoleOptions(rolesArray);
-        console.log("ii", rolesArray);
+        // console.log("ii", rolesArray);
         // }
         //  else {
         //   console.error("Invalid roles data format:", roleOptions);
@@ -178,7 +178,7 @@ const AddEmployee = () => {
   const handleDeleteEmployee = async (id) => {
     try {
       const token = cookie.get("token");
-      await axios.delete(`${baseURL}/employee/deleteEmployee/${id}`, {
+      await axios.delete(`${baseURL}/admin/removeUser/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
