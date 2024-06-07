@@ -297,7 +297,11 @@ const RolesTable = () => {
         <Close
           className="iconclose"
           onClick={handleClose}
-          sx={{ bgcolor: "--var(--secondary)" }}
+          sx={{
+            bgcolor: "--var(--secondary)",
+            alignSelf: "end",
+            marginRight: "10px",
+          }}
         />
 
         <Box
@@ -378,8 +382,9 @@ const RolesTable = () => {
           <DialogActions
             sx={{
               justifyContent: "space-between",
-              padding: "16px 24px",
+              marginBottom: "2px",
               backgroundColor: "var(--secondary)",
+              alignSelf: "center",
             }}
           >
             <Button
