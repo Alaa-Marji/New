@@ -66,7 +66,7 @@ export default function Login() {
       navigate("/");
     } catch (err) {
       setLoading(false);
-      if (err.response === 401) {
+      if (err.response.status === 401) {
         setErro("Wrong Email Or Password");
       } else {
         setErro("Internal Server Error ");
@@ -113,10 +113,10 @@ export default function Login() {
                   className="input-email"
                 />
               </div>
-              <Button onClick={handleOpen}>Forget Password?</Button>
+              <Button onClick={handleOpen}>Forgot Password?</Button>
             </div>
 
-            <button className="btn btn-primary">Submit</button>
+            <button className="btn btn-primary  sublogin">Submit</button>
             {erro !== "" && (
               <ErrorMessage message={erro} onClose={handleCloseErr} />
             )}
@@ -124,16 +124,7 @@ export default function Login() {
         </form>
       </div>
 
-      <Modal
-        className="modal"
-        open={open}
-        // onClose={(event, reason) => {
-        //   if (reason === "backdropClick" || reason === "escapeKeyDown") {
-        //     return;
-        //   }
-        //   handleClose();
-        // }}
-      >
+      <Modal className="modal" open={open}>
         <Fade in={open}>
           <Box className="modal-box modal-animation">
             <Close className="iconclose" onClick={handleClose} />

@@ -6,8 +6,8 @@ import {
 import { Avatar } from "@mui/material";
 import { useState, useEffect } from "react";
 
-import Search from "../Pages/Search/Search";
-import "../Pages/Search/styleSearch";
+// import Search from "../Pages/Search/Search";
+// import "../Pages/Search/styleSearch";
 import "../Components/S.css";
 
 export default function Topbar() {
@@ -27,7 +27,7 @@ export default function Topbar() {
 
   return (
     <div className="top">
-      <Search />
+      {/* <Search /> */}
       <div className="icon-group">
         <button
           onClick={() => {

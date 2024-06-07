@@ -2,24 +2,30 @@ import { useState } from "react";
 import "./style.css";
 import HomeIcon from "@mui/icons-material/Home";
 import {
+  AddModerator,
   BarChart,
   Block,
   ContactsOutlined,
   Group,
+  LocalPhone,
   LogoutRounded,
   ManageAccounts,
   MenuRounded,
+  Newspaper,
+  PersonAddAltRounded,
   PieChartOutline,
   ReportProblemRounded,
+  Settings,
   Timeline,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import Logout from "../Pages/Auth/Logout";
 
 export default function Sidebar() {
   const navigate = useNavigate();
   const [currentActive, setCurrentActive] = useState("dash");
   const [menuActive, setMenuActive] = useState(false);
-  const [submenuVisible, setSubmenuVisible] = useState(false);
+  const [submenuVisible, setSubmenuVisible] = useState(true);
 
   const handleSubmenuClick = (path) => {
     setSubmenuVisible(false);
@@ -44,6 +50,7 @@ export default function Sidebar() {
           onClick={() => {
             setCurrentActive("dash");
             navigate("");
+            setSubmenuVisible(false);
           }}
           className={currentActive === "dash" ? "active" : ""}
         >
@@ -53,7 +60,9 @@ export default function Sidebar() {
 
         <div className="submenu-container">
           <button
-            onClick={() => setSubmenuVisible(!submenuVisible)}
+            onClick={() => {
+              setSubmenuVisible(true);
+            }}
             className={currentActive === "manage" ? "active" : ""}
           >
             <ManageAccounts />
@@ -62,16 +71,25 @@ export default function Sidebar() {
           {submenuVisible && (
             <div className="submenu">
               <button
-                onClick={() => handleSubmenuClick("/Roles")}
+                onClick={() => {
+                  handleSubmenuClick("/Roles");
+                  setCurrentActive("manage");
+                  navigate("/Roles");
+                }}
                 className="submenu-item"
               >
-                Roles
+                <AddModerator /> {menuActive && <span>Roles</span>}
               </button>
               <button
-                onClick={() => handleSubmenuClick("/Employee")}
+                onClick={() => {
+                  handleSubmenuClick("/Employee");
+                  setCurrentActive("manage");
+                  navigate("/Employee");
+                }}
                 className="submenu-item"
               >
-                Employee
+                <PersonAddAltRounded />
+                {menuActive && <span>Employee</span>}
               </button>
             </div>
           )}
@@ -81,6 +99,7 @@ export default function Sidebar() {
           onClick={() => {
             setCurrentActive("user");
             navigate("/Users");
+            setSubmenuVisible(false);
           }}
           className={currentActive === "user" ? "active" : ""}
         >
@@ -91,6 +110,7 @@ export default function Sidebar() {
           onClick={() => {
             setCurrentActive("posts");
             navigate("/Posts");
+            setSubmenuVisible(false);
           }}
           className={currentActive === "posts" ? "active" : ""}
         >
@@ -101,6 +121,7 @@ export default function Sidebar() {
           onClick={() => {
             setCurrentActive("block");
             navigate("/Block");
+            setSubmenuVisible(false);
           }}
           className={currentActive === "block" ? "active" : ""}
         >
@@ -111,6 +132,7 @@ export default function Sidebar() {
           onClick={() => {
             setCurrentActive("reports");
             navigate("/Reports");
+            setSubmenuVisible(false);
           }}
           className={currentActive === "reports" ? "active" : ""}
         >
@@ -120,40 +142,40 @@ export default function Sidebar() {
 
         <button
           onClick={() => {
-            setCurrentActive("Line");
-            navigate("LineChart");
+            setCurrentActive("News");
+            navigate("News");
+            setSubmenuVisible(false);
           }}
-          className={currentActive === "Line" ? "active" : ""}
+          className={currentActive === "News" ? "active" : ""}
         >
-          <Timeline />
-          {menuActive && <span>Line Chart</span>}
+          <Newspaper />
+          {menuActive && <span>News</span>}
         </button>
         <button
           onClick={() => {
-            setCurrentActive("pie");
-            navigate("PieChart");
+            setCurrentActive("Contact");
+            navigate("Contact-Us");
+            setSubmenuVisible(false);
           }}
-          className={currentActive === "pie" ? "active" : ""}
+          className={currentActive === "Contact" ? "active" : ""}
         >
-          <PieChartOutline />
-          {menuActive && <span>Pie Chart</span>}
+          <LocalPhone />
+          {menuActive && <span>Contact Us</span>}
         </button>
         <button
           onClick={() => {
-            setCurrentActive("bar");
-            navigate("BarChart");
+            setCurrentActive("Settings");
+            navigate("Settings");
+            setSubmenuVisible(false);
           }}
-          className={currentActive === "bar" ? "active" : ""}
+          className={currentActive === "Settings" ? "active" : ""}
         >
-          <BarChart />
-          {menuActive && <span>Bar chart</span>}
+          <Settings />
+          {menuActive && <span>Settings</span>}
         </button>
       </div>
-      <div className="logout-button">
-        <button>
-          <LogoutRounded />
-          {menuActive && <span>Logout</span>}
-        </button>
+      <div className="logout-button ">
+        <Logout menuActive />
       </div>
     </div>
   );

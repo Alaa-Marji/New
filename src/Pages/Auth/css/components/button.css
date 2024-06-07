@@ -4,12 +4,22 @@
   border: 0;
   padding: 20px 30px;
   margin-top: 0;
-  margin-left: 100px;
+  /* margin-left: 100px; */
   border-radius: 50px;
+  transition: 2s;
 }
 .btn-primary {
   background-color: #3585a5;
   color: white;
   font-size: 15px;
   cursor: pointer;
+}
+.btn-primary:hover {
+  background-color: #24586e;
+  color: #ffffff;
+  box-shadow: #a53535;
+}
+
+.sublogin {
+  margin-left: 90px;
 }

@@ -43,7 +43,7 @@ function ResetPassword({ onSubmit, code }) {
 
       <form className="reset" onSubmit={handleSubmit}>
         <h2>Enter Password</h2>
-        <p>Please enter your password and confirm it below:</p>
+        <label>Please enter your password and confirm it below:</label>
         <input
           type="password"
           placeholder="Password"

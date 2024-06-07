@@ -34,7 +34,7 @@ function EmailInputForm({ onSubmit }) {
     <>
       {oLoading && <Loading />}
       <form className="forma" onSubmit={handleSubmit}>
-        <h2>Enter Your Email:</h2>
+        <h2 className="title">Enter Your Email:</h2>
         <label >We Will Send Code Co Your Email</label>
         <input
           type="email"

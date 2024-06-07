@@ -52,7 +52,7 @@ function OTPInput({ onSubmit, setCode }) {
 
       <form className="opt" onSubmit={handleSubmit}>
         <h2>Enter Code:</h2>
-        <p>Please enter the 6-digit code sent to your email:</p>
+        <label>Please enter the 6-digit code sent to your email:</label>
         <div className="parent-otp">
           {otp.map((digit, index) => (
             <input

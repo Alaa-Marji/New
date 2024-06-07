@@ -1,4 +1,5 @@
-import { PieChart, Pie, Legend, Tooltip, ResponsiveContainer } from "recharts";
+// import { PieChart, Pie, Legend, Tooltip, ResponsiveContainer } from "recharts";
+import { PieChart } from "@mui/x-charts/PieChart";
 
 import axios from "axios";
 import Cookie from "cookie-universal";
@@ -34,33 +35,31 @@ export default function PieChar() {
 
   const data = [
     {
-      name: "Seekers",
+      id: 0,
+      label: "Seekers",
       value: data2.seekers,
     },
     {
-      name: "Companies",
+      id: 1,
+      label: "Companies",
       value: data2.companies,
     },
     {
-      name: "Employees",
+      id: 2,
+      label: "Employees",
       value: data2.employees,
     },
   ];
   return (
-    <ResponsiveContainer width="100%" height="100%">
-      <PieChart width={400} height={400}>
-        <Pie
-          dataKey="value"
-          isAnimationActive={false}
-          data={data}
-          cx="50%"
-          cy="50%"
-          outerRadius={80}
-          fill="#8884d8"
-          label
-        />
-        <Tooltip />
-      </PieChart>
-    </ResponsiveContainer>
+    <PieChart
+      series={[
+        {
+          data,
+          highlightScope: { faded: "global", highlighted: "item" },
+          faded: { innerRadius: 30, additionalRadius: -30, color: "gray" },
+        },
+      ]}
+      height={200}
+    />
   );
 }

@@ -1,21 +1,21 @@
-import { LOGOUT, baseURL } from "../../Api/Api";
-import axios from "axios";
+import { LogoutRounded } from "@mui/icons-material";
 import Cookie from "cookie-universal";
-import PropTypes from "prop-types";
 
-export default function Logout({ handleLogout }) {
-  // استخدام handleLogout كـ prop
-  //Cookies
+import { useNavigate } from "react-router-dom";
+
+export default function Logout(menuActive) {
   const cookie = Cookie();
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    console.log("cookie.remove");
+    cookie.removeAll();
+    sessionStorage.clear();
+    navigate("/login");
+    console.log("Logged out");
+  };
 
   async function handleLogoutClick() {
     try {
-      const res = await axios.get(`${baseURL}/${LOGOUT}`, {
-        headers: {
-          Authorization: "Bearer" + cookie.get("token"),
-        },
-      });
-
       handleLogout();
     } catch (err) {
       console.log(err);
@@ -25,19 +25,14 @@ export default function Logout({ handleLogout }) {
   return (
     <button
       style={{
-        minHeight: 48,
-        border: "none",
         background: "transparent",
-        justifyContent: open ? "initial" : "center",
+        justifyContent: open ? "center" : "initial",
         padding: 2.5,
       }}
       onClick={handleLogoutClick}
     >
-      Logout
+      <LogoutRounded />
+      {menuActive && <span>Logout</span>}
     </button>
   );
 }
-
-Logout.propTypes = {
-  handleLogout: PropTypes.func.isRequired,
-};

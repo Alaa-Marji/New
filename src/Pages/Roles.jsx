@@ -13,13 +13,7 @@ import {
   Slide,
   Chip,
 } from "@mui/material";
-import {
-  Edit,
-  Delete,
-  ManageAccounts,
-  ManageAccountsOutlined,
-  AdminPanelSettings,
-} from "@mui/icons-material";
+import { Edit, Delete, AdminPanelSettings, Close } from "@mui/icons-material";
 import { baseURL } from "../Api/Api";
 import Cookie from "cookie-universal";
 import { DataGrid } from "@mui/x-data-grid";
@@ -98,8 +92,8 @@ const RolesTable = () => {
 
   const fetchRoles = async () => {
     try {
-      const token = cookie.get("Bearer");
-      const rolesResponse = await axios.get(`${baseURL}/role/allRoles`, {
+      const token = cookie.get("token");
+      const rolesResponse = await axios.get(`${baseURL}/admin/role/allRoles`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -152,11 +146,15 @@ const RolesTable = () => {
     };
 
     try {
-      const response = await axios.post(`${baseURL}/role/addRole`, roleData, {
-        headers: {
-          Authorization: `Bearer ${cookie.get("Bearer")}`,
-        },
-      });
+      const response = await axios.post(
+        `${baseURL}/admin/role/addRole`,
+        roleData,
+        {
+          headers: {
+            Authorization: `Bearer ${cookie.get("token")}`,
+          },
+        }
+      );
 
       setRoles([...roles, response.data.data]);
       setOpen(false);
@@ -182,7 +180,7 @@ const RolesTable = () => {
 
   const handleDeleteRole = async (id) => {
     try {
-      const token = cookie.get("Bearer");
+      const token = cookie.get("token");
 
       const confirmed = window.confirm("Are You Sure?");
 
@@ -190,11 +188,14 @@ const RolesTable = () => {
         return;
       }
 
-      await axios.delete(`http://127.0.0.1:8000/api/role/deleteRole/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await axios.delete(
+        `http://127.0.0.1:8000/api/admin/role/deleteRole/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       setRoles(roles.filter((role) => role.id !== id));
     } catch (error) {
@@ -267,6 +268,7 @@ const RolesTable = () => {
         overflowY: "auto",
         padding: 2,
         bgcolor: "var(--secondary)",
+        color: "var(--title)",
       }}
     >
       <Button
@@ -287,19 +289,14 @@ const RolesTable = () => {
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
+          bgcolor: "--var(--secondary)",
         }}
       >
-        <Button
+        <Close
+          className="iconclose"
           onClick={handleClose}
-          color="primary"
-          sx={{
-            padding: "10px",
-
-            textAlign: "end",
-          }}
-        >
-          Cancel
-        </Button>
+          sx={{ bgcolor: "--var(--secondary)" }}
+        />
 
         <Box
           component="form"
@@ -324,7 +321,7 @@ const RolesTable = () => {
             sx={{
               paddingBottom: 0,
               color: "var(--title)",
-              backgroundColor: "var(--secondary)",
+              bgcolor: "var(--secondary)",
               alignSelf: "center",
             }}
           >
@@ -351,7 +348,7 @@ const RolesTable = () => {
               }}
             />
             <Grid container spacing={0} sx={{ bgcolor: "var(--secondary)" }}>
-              {predefinedPermissions.map((permission) => (
+              {predefinedPermissions?.map((permission) => (
                 <Grid item key={permission}>
                   <Chip
                     label={permission}
@@ -396,103 +393,29 @@ const RolesTable = () => {
       </Dialog>
 
       {roles.length > 0 ? (
-        <TableContainer
-          component={Paper}
-          sx={{ bgcolor: "var(--secondary) ", color: "var(--title)" }}
+        <Box
+          sx={{
+            height: 480,
+            width: "100%",
+            color: "var(--title)",
+            bgcolor: "var(--secondary)",
+          }}
         >
-          <Table sx={{ bgcolor: "var(--secondary) ", color: "var(--title)" }}>
-            <TableHead
-              sx={{ bgcolor: "var(--secondary) ", color: "var(--title)" }}
-            >
-              <TableRow
-                sx={{ bgcolor: "var(--secondary) ", color: "var(--title)" }}
-              >
-                <TableCell
-                  sx={{ bgcolor: "var(--secondary) ", color: "var(--title)" }}
-                >
-                  ID
-                </TableCell>
-                <TableCell
-                  sx={{ bgcolor: "var(--secondary) ", color: "var(--title)" }}
-                >
-                  Role
-                </TableCell>
-                <TableCell
-                  sx={{ bgcolor: "var(--secondary) ", color: "var(--title)" }}
-                >
-                  Permissions
-                </TableCell>
-                <TableCell
-                  sx={{ bgcolor: "var(--secondary) ", color: "var(--title)" }}
-                >
-                  Action
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody
-              sx={{ bgcolor: "var(--secondary) ", color: "var(--title)" }}
-            >
-              {roles?.map((role) => (
-                <TableRow key={role?.id}>
-                  <TableCell
-                    sx={{ alignSelf: "center", color: "var(--title) " }}
-                  >
-                    {role?.id}
-                  </TableCell>
-                  <TableCell
-                    sx={{ alignSelf: "center", color: "var(--title)" }}
-                  >
-                    {role?.name}
-                  </TableCell>
-                  <TableCell
-                    sx={{ alignSelf: "center", color: "var(--title) " }}
-                  >
-                    {Array.isArray(role.permissions) &&
-                      role?.permissions?.map((permission) => (
-                        <Button
-                          key={permission}
-                          variant="contained"
-                          style={{
-                            margin: 2,
-                            fontSize: "smaller",
-                            cursor: "not-allowed",
-                            pointerEvents: "none",
-                            borderRadius: "20px",
-                          }}
-                        >
-                          <AdminPanelSettings />
-                          {permission.name}
-                        </Button>
-                      ))}
-                  </TableCell>
-                  <TableCell
-                    style={{
-                      display: "flex",
-                      gap: "2px",
-                      color: "var(--title) ",
-                    }}
-                  >
-                    <IconButton
-                      aria-label="edit"
-                      onClick={() => handleEditRole(role.id)}
-                      sx={{ color: "var(--title)" }}
-                    >
-                      <Edit />
-                    </IconButton>
-
-                    <IconButton
-                      aria-label="delete"
-                      onClick={() => handleDeleteRole(role.id)}
-                      sx={{ color: "var(--title)" }}
-                    >
-                      <Delete />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+          <DataGrid
+            rows={roles?.map((role) => ({
+              ...role,
+              permissions: role.permissions?.map((perm) => perm.name),
+            }))}
+            columns={columns}
+            pageSize={5}
+            rowsPerPageOptions={[5, 10, 20]}
+            sx={{ color: "var(--title)", bgcolor: "var(--secondary)" }}
+            // components={{
+            //   Toolbar: GridToolbarContainer,
+            //   ExportButton: GridToolbarExport,
+            // }}
+          />
+        </Box>
       ) : (
         <Box
           display="flex"

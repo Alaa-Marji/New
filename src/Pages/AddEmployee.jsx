@@ -1,13 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
   Button,
   Box,
   TextField,
@@ -28,6 +21,7 @@ import { baseURL } from "../Api/Api";
 import Cookie from "cookie-universal";
 import "./Loading/Loading.css";
 import Loading from "./Loading/loading";
+import { DataGrid } from "@mui/x-data-grid";
 
 const AddEmployee = () => {
   const [employees, setEmployees] = useState([]);
@@ -46,7 +40,7 @@ const AddEmployee = () => {
 
   const fetchEmployees = async () => {
     try {
-      const token = cookie.get("Bearer");
+      const token = cookie.get("token");
       const employeesResponse = await axios.get(
         `http://127.0.0.1:8000/api/admin/employee/employees`,
         {
@@ -68,16 +62,19 @@ const AddEmployee = () => {
 
   const fetchRoles = async () => {
     try {
-      const token = cookie.get("Bearer");
-      const rolesResponse = await axios.get(`${baseURL}/role/allRoles`, {
+      const token = cookie.get("token");
+      const rolesResponse = await axios.get(`${baseURL}/admin/role/allRoles`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
       const rolesData = rolesResponse.data.data;
-      console.log("fmkrkgjifkj", rolesData);
+
       const rolesArray = rolesData?.map((item) => item?.name);
+      delete rolesArray[1];
+      delete rolesArray[4];
+
       setRoleOptions(rolesArray);
     } catch (error) {
       console.error("Error fetching roles:", error);
@@ -88,6 +85,73 @@ const AddEmployee = () => {
     fetchRoles();
     fetchEmployees();
   }, []);
+
+  const columns = [
+    { field: "id", headerName: "ID", width: 50, alignSelf: "center" },
+    { field: "user_name", headerName: "User Name", width: 100 },
+    { field: "email", headerName: "Email", width: 180 },
+    {
+      field: "role",
+      headerName: "Roles",
+      flex: 1,
+      renderCell: (params) =>
+        params.value?.map((role) => (
+          <Chip
+            key={role}
+            label={role}
+            icon={<AdminPanelSettings style={{ color: "black" }} />}
+            style={{
+              backgroundColor: getRandomLightColor(),
+              color: "black",
+              margin: "2px",
+            }}
+          />
+        )),
+    },
+    {
+      field: "actions",
+      headerName: "Actions",
+      alignSelf: "center",
+      width: "130",
+      renderCell: (params) => (
+        <>
+          {params.row.is_change_password ? (
+            <>
+              <IconButton
+                aria-label="edit"
+                onClick={() => handleEditEmployee(params.row.id)}
+              >
+                <Edit />
+              </IconButton>
+              <IconButton
+                aria-label="delete"
+                onClick={() => handleDeleteEmployee(params.row.id)}
+              >
+                <Delete />
+              </IconButton>
+            </>
+          ) : (
+            <Chip
+              label="Not-Verified"
+              style={{
+                backgroundColor: "red",
+                width: "auto",
+                alignSelf: "center",
+              }}
+            />
+          )}
+        </>
+      ),
+    },
+  ];
+
+  const rows = employees?.map((employee) => ({
+    id: employee.id,
+    user_name: employee.user_name,
+    email: employee.email,
+    role: employee.role,
+    is_change_password: employee.more_info?.is_change_password,
+  }));
 
   const getRandomLightColor = () => {
     const darkColors = [
@@ -153,12 +217,12 @@ const AddEmployee = () => {
 
   const handleEditEmployee = (id) => {
     const employee = employees.find((employee) => employee.id === id);
-    setEditingEmployee(employee);
-    setFirstName(employee.more_info.first_name);
-    setEmail(employee.email);
-    setMiddleName(employee.more_info.middle_name);
-    setLastName(employee.more_info.last_name);
-    setGender(employee.more_info.gender);
+    setEditingEmployee(employee.id);
+    // setFirstName(employee.more_info.first_name);
+    // setEmail(employee.email);
+    // setMiddleName(employee.more_info.middle_name);
+    // setLastName(employee.more_info.last_name);
+    // setGender(employee.more_info.gender);
     setSelectedRoles(employee.role);
     setShowEditDialog(true);
   };
@@ -170,18 +234,18 @@ const AddEmployee = () => {
     };
 
     try {
-      const response = await axios.put(
-        `http://127.0.0.1:8000/api/admin/employee/updateEmployee/${editingEmployee.id}`,
+      await axios.put(
+        `http://127.0.0.1:8000/api/admin/role/editUserRoles/${editingEmployee}`,
         updatedEmployeeData,
         {
           headers: {
-            Authorization: `Bearer ${cookie.get("Bearer")}`,
+            Authorization: `Bearer ${cookie.get("token")}`,
           },
         }
       );
 
       setEmployees(
-        employees.map((employee) =>
+        employees?.map((employee) =>
           employee.id === editingEmployee.id
             ? { ...employee, role: selectedRoles }
             : employee
@@ -191,6 +255,7 @@ const AddEmployee = () => {
       setShowEditDialog(false);
       setEditingEmployee(null);
       setSelectedRoles([]);
+      fetchEmployees();
     } catch (error) {
       console.error("There was an error updating the employee!", error);
     }
@@ -198,7 +263,7 @@ const AddEmployee = () => {
 
   const handleDeleteEmployee = async (id) => {
     try {
-      const token = cookie.get("Bearer");
+      const token = cookie.get("token");
       const confirmed = window.confirm("Are You Sure ?");
 
       if (!confirmed) {
@@ -260,6 +325,7 @@ const AddEmployee = () => {
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
+          className: "dialog-animation",
         }}
         onClose={(event, reason) => {
           if (reason !== "backdropClick") {
@@ -439,9 +505,10 @@ const AddEmployee = () => {
                 value={selectedRoles}
                 onChange={(e) => setSelectedRoles(e.target.value)}
                 multiple
+                required
                 renderValue={(selected) => (
                   <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                    {selected.map((value) => (
+                    {selected?.map((value) => (
                       <Chip
                         key={value}
                         label={value}
@@ -504,7 +571,7 @@ const AddEmployee = () => {
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
-
+          className: "modal-animation",
           color: "var(--title)",
         }}
         open={showEditDialog}
@@ -562,7 +629,7 @@ const AddEmployee = () => {
                 backgroundColor: "var(--secondary)",
               }}
             >
-              {selectedRoles.map((role) => (
+              {selectedRoles?.map((role) => (
                 <Chip
                   key={role}
                   label={role}
@@ -630,150 +697,19 @@ const AddEmployee = () => {
       </Dialog>
 
       {employees.length > 0 ? (
-        <Table
-          component={Paper}
-          style={{ background: "var( --secondary)", color: "var(--title)" }}
-        >
-          <Table
-            style={{ background: "var( --secondary)", color: "var(--title)" }}
-          >
-            <TableHead
-              style={{ background: "var( --secondary)", color: "var(--title)" }}
-            >
-              <TableRow
-                style={{
-                  background: "var( --secondary)",
-                  color: "var(--title)",
-                }}
-              >
-                <TableCell
-                  style={{
-                    background: "var( --secondary)",
-                    color: "var(--title)",
-                    alignSelf: "center",
-                  }}
-                >
-                  ID
-                </TableCell>
-                <TableCell
-                  style={{
-                    background: "var( --secondary)",
-                    color: "var(--title)",
-                  }}
-                >
-                  User Name
-                </TableCell>
-                <TableCell
-                  style={{
-                    background: "var( --secondary)",
-                    color: "var(--title)",
-                  }}
-                >
-                  Email
-                </TableCell>
-                <TableCell
-                  style={{
-                    background: "var( --secondary)",
-                    color: "var(--title)",
-                  }}
-                >
-                  Roles
-                </TableCell>
-                <TableCell
-                  style={{
-                    background: "var( --secondary)",
-                    color: "var(--title)",
-                  }}
-                >
-                  Actions
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {employees?.map((employee) => (
-                <TableRow key={employee.id}>
-                  <TableCell
-                    style={{
-                      background: "var( --secondary)",
-                      color: "var(--title)",
-                    }}
-                  >
-                    {employee.id}
-                  </TableCell>
-                  <TableCell
-                    style={{
-                      background: "var( --secondary)",
-                      color: "var(--title)",
-                    }}
-                  >
-                    {employee.user_name}
-                  </TableCell>
-                  <TableCell
-                    style={{
-                      background: "var( --secondary)",
-                      color: "var(--title)",
-                    }}
-                  >
-                    {employee.email}
-                  </TableCell>
-
-                  <TableCell
-                    style={{
-                      background: "var( --secondary)",
-                      color: "var(--title)",
-                    }}
-                  >
-                    {Array.isArray(employee.role) &&
-                      employee.role.map((item) => (
-                        <Button
-                          key={item}
-                          variant="contained"
-                          style={{
-                            backgroundColor: getRandomLightColor(),
-                            fontSize: "smaller",
-                            margin: 2,
-                            width: "auto",
-                            height: "auto",
-                            cursor: "not-allowed",
-                            pointerEvents: "none",
-                            borderRadius: "20px",
-                          }}
-                        >
-                          <AdminPanelSettings />
-                          {item}
-                        </Button>
-                      ))}
-                  </TableCell>
-                  <TableCell
-                    style={{
-                      display: "flex",
-                      gap: "2px",
-                      alignSelf: "center",
-
-                      background: "var( --secondary)",
-                      color: "var(--title)",
-                    }}
-                  >
-                    <IconButton
-                      aria-label="edit"
-                      onClick={() => handleEditEmployee(employee.id)}
-                      sx={{ color: "var(--title)" }}
-                    >
-                      <Edit />
-                    </IconButton>
-                    <IconButton
-                      aria-label="delete"
-                      onClick={() => handleDeleteEmployee(employee.id)}
-                      sx={{ color: "var(--title)" }}
-                    >
-                      <Delete />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </Table>
+        <Box sx={{ height: 480, width: "100%" }}>
+          <DataGrid
+            rows={rows}
+            columns={columns}
+            pageSize={5}
+            rowsPerPageOptions={[5]}
+            sx={{
+              backgroundColor: "var(--secondary)",
+              color: "var(--title)",
+              borderRadius: "10px",
+            }}
+          />
+        </Box>
       ) : (
         <Box
           display="flex"
@@ -787,7 +723,7 @@ const AddEmployee = () => {
             style={{ width: "300px", height: "300px" }}
           />
           <h3 style={{ color: "var(--title)" }}>
-            There Are No Users To display, Let's Add Someone To Our Team
+            There Are No Users To display, Lets Add Someone To Our Team
           </h3>
         </Box>
       )}

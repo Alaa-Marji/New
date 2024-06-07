@@ -20,6 +20,9 @@ import Users from "./Pages/Users";
 import Login from "./Pages/Auth/Login";
 import Roles from "./Pages/Roles";
 import AddEmployee from "./Pages/AddEmployee";
+import News from "./Pages/News";
+import ContactUs from "./Pages/Contact-Us";
+import Settings from "./Pages/Settings";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -28,9 +31,9 @@ const router = createBrowserRouter(
         <Route index element={<Dashboard />} />
         <Route path="/Roles" element={<Roles />} />
         <Route path="/Employee" element={<AddEmployee />} />
-        <Route path="/BarChart" element={<BarChar />} />
-        <Route path="/LineChart" element={<LineChar />} />
-        <Route path="/PieChart" element={<PieChar />} />
+        <Route path="/Contact-Us" element={<ContactUs />} />
+        <Route path="/News" element={<News />} />
+        <Route path="/Settings" element={<Settings />} />
 
         <Route path="/Block" element={<Block />} />
         {/* <Route path="/CompaniesRegistration" element={<ContractRequests />} />

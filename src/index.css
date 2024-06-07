@@ -58,6 +58,36 @@ css-1t1j96h-MuiPaper-root-MuiDialog-paper {
   }
 }
 
+.dialog-animation {
+  animation: mve 0.77s 1;
+}
+
+@keyframes mve {
+  0% {
+    scale: 0;
+  }
+
+  60% {
+    scale: 1.2;
+  }
+
+  100% {
+    scale: 1;
+  }
+}
+
+.dialog-animation
+  .MuiPaper-root
+  .MuiPaper-elevation
+  .MuiPaper-rounded
+  .MuiPaper-elevation24
+  .MuiDialog-paper
+  .MuiDialog-paperScrollPaper
+  .MuiDialog-paperWidthSm
+  .css-1t1j96h-MuiPaper-root-MuiDialog-paper {
+  background-color: red;
+}
+
 /* wave-transition.css */
 @keyframes waveAnimation {
   0% {
