@@ -17,7 +17,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function Sidebar() {
   const navigate = useNavigate();
-  const [currentActive, setCurrentActive] = useState("home");
+  const [currentActive, setCurrentActive] = useState("dash");
   const [menuActive, setMenuActive] = useState(false);
   const [submenuVisible, setSubmenuVisible] = useState(false);
 

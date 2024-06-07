@@ -77,10 +77,18 @@ a {
   margin-bottom: 40px;
   color: rgb(45, 45, 95);
 }
+
+.forma {
+  display: "flex";
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+
 .forma h2,
 .opt h2,
 .reset h2 {
-  margin-left: 130px;
+  margin-left: 120px;
   margin-bottom: 10px;
   color: rgb(18, 18, 32);
 }
@@ -90,6 +98,7 @@ a {
 .forma label {
   margin-left: 100px;
   margin-bottom: 20px;
+  color: black;
 }
 .forma input {
   margin-right: 30px;
