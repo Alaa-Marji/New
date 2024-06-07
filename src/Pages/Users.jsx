@@ -336,7 +336,7 @@ const Users = () => {
               <Typography
                 style={{ color: "var(--title)", backgroundColor: "unset" }}
               >
-                0 Username: {selectedUser.name}
+                Username: {selectedUser.name}
               </Typography>
               <Typography
                 style={{ color: "var(--title)", backgroundColor: "unset" }}

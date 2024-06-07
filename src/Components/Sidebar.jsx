@@ -61,7 +61,7 @@ export default function Sidebar() {
         <div className="submenu-container">
           <button
             onClick={() => {
-              setSubmenuVisible(true);
+              setSubmenuVisible(!submenuVisible);
             }}
             className={currentActive === "manage" ? "active" : ""}
           >

@@ -230,12 +230,14 @@ const RolesTable = () => {
               key={index}
               label={permission}
               style={{
-                color: "black",
                 margin: 2,
                 borderRadius: "20px",
-                backgroundColor: getRandomLightColor(),
+                backgroundColor: "rgb(189, 212, 255)",
+                color: "rgb(53, 52, 52)",
               }}
-              icon={<AdminPanelSettings style={{ color: "black" }} />}
+              icon={
+                <AdminPanelSettings style={{ color: " rgb(78, 76, 76)" }} />
+              }
             />
           ))}
         </Box>

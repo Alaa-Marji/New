@@ -16,7 +16,7 @@ import {
   Typography,
   Chip,
 } from "@mui/material";
-import { Edit, Delete, AdminPanelSettings } from "@mui/icons-material";
+import { Edit, Delete, AdminPanelSettings, Close } from "@mui/icons-material";
 import { baseURL } from "../Api/Api";
 import Cookie from "cookie-universal";
 import "./Loading/Loading.css";
@@ -99,10 +99,10 @@ const AddEmployee = () => {
           <Chip
             key={role}
             label={role}
-            icon={<AdminPanelSettings style={{ color: "black" }} />}
+            icon={<AdminPanelSettings style={{ color: "white" }} />}
             style={{
-              backgroundColor: getRandomLightColor(),
-              color: "black",
+              backgroundColor: "#24586e",
+              color: "white",
               margin: "2px",
             }}
           />
@@ -134,8 +134,9 @@ const AddEmployee = () => {
             <Chip
               label="Not-Verified"
               style={{
-                backgroundColor: "red",
+                backgroundColor: "#960a0a",
                 width: "auto",
+                color: "white",
                 alignSelf: "center",
               }}
             />
@@ -333,15 +334,14 @@ const AddEmployee = () => {
           }
         }}
       >
-        <Button
+        <Close
+          className="iconclose"
           onClick={() => setShowDialog(false)}
-          color="primary"
           style={{
             alignSelf: "end",
+            marginRight: "10px",
           }}
-        >
-          Cancel
-        </Button>
+        />
         <DialogTitle
           sx={{
             display: "flex",
@@ -577,15 +577,15 @@ const AddEmployee = () => {
         open={showEditDialog}
         onClose={() => setShowEditDialog(false)}
       >
-        <Button
+        <Close
+          className="iconclose"
           onClick={() => setShowEditDialog(false)}
-          color="primary"
           style={{
             alignSelf: "end",
+            marginRight: "10px",
           }}
-        >
-          Cancel
-        </Button>
+        />
+
         <img
           src="../../public/edit.gif"
           alt="Loading"
